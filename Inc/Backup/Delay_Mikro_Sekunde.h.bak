@@ -1,0 +1,31 @@
+/*
+ * Delay_Mikro_Sekunde.h
+ *
+ *  Created on: 04.01.2020
+ *      Author: Home
+ */
+/************** Funktion Delay in Mikrosekunde**********************/
+/**
+  * @brief  delay in microseconds.
+  * @param  htim TIM handle: Timer 8
+  * @param  delay_µs: This parameter can be from 1 to 0xffff due to Timer 16Bit
+  * @retval delay_µs
+  */
+
+#ifndef DELAY_MIKRO_SEKUNDE_H_
+#define DELAY_MIKRO_SEKUNDE_H_
+
+//Start the Timer8
+//HAL_TIM_Base_Start(&htim8);
+
+//Copy this function into main.c bevor the main function
+
+void delay_us(uint16_t us)
+{
+	__HAL_TIM_SET_COUNTER(&htim8,0);
+	while (__HAL_TIM_GET_COUNTER(&htim8) < us);
+}
+
+//in main function use this function to make delay in microseconds: 1 equal to 1 µs delay
+//delay_us(1);
+#endif /* DELAY_MIKRO_SEKUNDE_H_ */

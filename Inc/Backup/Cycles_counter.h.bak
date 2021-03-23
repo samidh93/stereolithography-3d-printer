@@ -1,0 +1,18 @@
+/*
+ * Cycles_counter.h
+ *
+ *  Created on: 10.12.2019
+ *      Author: Home
+ */
+
+#ifndef CYCLES_COUNTER_H_
+#define CYCLES_COUNTER_H_
+
+DWT->CTRL |=1; //Start des Zykluszählers
+DWT->CYCCNT = 0 ; //Den Zykluszähler auf 0 setzen
+HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5); // Funktion X (beliebige Funktion) ausführen
+DWT->CTRL |=0; //Zykluszähler abschalten
+printf("\nZahl: %ld \n",DWT->CYCCNT); //Wert des Zykluszählers über USART ausgeben
+HAL_Delay(3000);
+
+#endif /* CYCLES_COUNTER_H_ */

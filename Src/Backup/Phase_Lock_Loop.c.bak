@@ -1,0 +1,44 @@
+/*
+ * Phase_Lock_Loop.c
+ *
+ *  Created on: 10.01.2020
+ *      Author: dominik
+ */
+/*
+
+//Vorgaben und Messwerte:
+float phi_soll;		//Phasenverschiebung soll
+float phi_ist;		//Phasenevrschiebung ist
+float t_phi;  		//Phasenevrschiebung Zeit t
+
+
+//Zeitvariablen
+float t1;			//Zeit dunkel
+float t0;			//Startzeit
+float t21n;			//zeitpunkt T2 - T1
+float t1n;			//Zeitpunkt dunkel
+float t2n;			//Zeitpunkt hell
+float t3n;			//Zeitpunkt dunkel
+float t4n;			//Zeitpunkt hell
+float t43n;			//Zeitpunkt T4-T3
+
+//alte Zeiten
+float t4n_1;		//Wert T4 aus vorheriger Periode
+float t3n_1;		//Wert T3 aus vorheriger Periode
+float Periodendauer;// Periodendauer
+
+
+
+//Vergangenheitsform
+
+
+//Berechnung t21 und t43
+t21 = (((t2 - t1) /2) + t1);
+t43 = (((t4 - t3) /2) + t3);
+
+t_phi = (((t4n - t3n)/2) + t3n) - (((t4n-1 - t3n-1
+
+*/
+
+
+

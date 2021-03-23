@@ -1,0 +1,203 @@
+/*
+ * Main_Endschalter_anfahren.c1
+ *
+ *  Created on: 08.01.2020
+ *      Author: Dominik Stender
+ */
+
+/*
+
+#include "stm32f3xx_hal.h"
+#include "SchrittMotor_Y.h"
+#include "Debounce_Button.h"
+
+
+
+//Funktionen die in h-Datei kopiert werden
+void Debouncen_Endschalter_Y (void);
+void Debouncen_Endschalter_Z (void);
+void Ref_Motor_z (void);
+void Ref_Motor_y (void);
+void Startposition (void);
+
+//Deklarieren der Variablen
+
+_Bool Endschalter_Y_druck;	//Endschalter sind Öffner (!)
+_Bool Endschalter_Z_druck;  //Endschalter sind Öffner (!)
+
+
+
+//Anfahren Startposition Druckstart
+int Startposition_Z=100;
+int Startposition_Y=100;
+
+//Variablen zum DArstellen Endschalter und Taster
+_Bool Auslesen_Endsch_Y=SET;
+_Bool Auslesen_Endsch_Z=SET;
+_Bool Auslesen_Taster1=SET;
+
+
+
+//Teile die vermutlich in H-Datei kommen
+
+#ifndef DEBOUNCE_BUTTON_H_
+#define DEBOUNCE_BUTTON_H_
+
+void debounce_button (void);
+void Debouncen_Endschalter_Y (void);
+void Debouncen_Endschalter_Z (void);
+void Ref_Motor_z (void);
+void Ref_Motor_y (void);
+void Startposition (void);
+
+
+
+
+
+_Bool reading;
+_Bool ledState = 1;
+_Bool buttonState_Y;
+_Bool buttonState;
+_Bool buttonState_Z;
+
+_Bool lastButtonState_Y;
+_Bool lastButtonState_Z;
+_Bool lastButtonState;
+
+unsigned long lastDebounceTime;
+unsigned long lastDebounceTime_Z = 0;
+unsigned long lastDebounceTime_Y = 0;
+
+
+unsigned long debounceDelay = 50;
+unsigned long debounceDelay_Y = 50;
+unsigned long debounceDelay_Z = 50;
+
+_Bool reading;
+
+#endif /* DEBOUNCE_BUTTON_H_ */
+
+
+/*
+
+int main ()
+{
+//Entprelle Endschalter Y
+
+void Debouncen_Endschalter_Y ()  // Frage: Was passiert, wenn EMotor wieder von Endschalter fährt
+{
+	Auslesen_Endsch_Y = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_7); //angepasst
+		if (Auslesen_Endsch_Y != lastButtonState_Y) { //Kann man hier nicht besser 0 schreiben (da Öffner)
+			lastDebounceTime_Y = HAL_GetTick();
+		}
+
+		if ((HAL_GetTick() - lastDebounceTime_Y) > debounceDelay_Y) {
+			if (Auslesen_Endsch_Y != buttonState_Y) {
+				buttonState_Y = Auslesen_Endsch_Y;
+
+
+				if (buttonState_Y == RESET) {
+					Endschalter_Y_druck = RESET;
+
+			}
+		}
+	}
+
+
+
+//Entprelle Entschalter Z  --> NOCH ÜBERARBEITEN
+void Debouncen_Endschalter_Z (){
+
+	Auslesen_Endsch_Z = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1); //Pin noch Ändern
+	if (Auslesen_Endsch_Z != lastButtonState_Z) {
+		lastDebounceTime_Z = HAL_GetTick();
+	}
+
+	if ((HAL_GetTick() - lastDebounceTime_Z) > debounceDelay_Z) {
+		if (Auslesen_Endsch_Z != buttonState_Z) {
+			buttonState_Z = Auslesen_Endsch_Z;
+
+
+			if (buttonState_Z == RESET) {
+				Endschalter_Z_druck = RESET;
+			}
+		}
+}
+
+//Motor soll fahren bis Endschalter erreicht ist  --PINS NOCH ANPASSEN
+void Ref_Motor_z ()
+{
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);			// Reset (inverted) PIN
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);			// Sleep (inverted) PIN
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET); 		// Enable (inverted) PIN
+
+
+//While-Schleife bis Endschalter erreicht
+while(Endschalter_Z_druck != 0){
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);	// STEP PIN High : HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_6);
+			HAL_Delay(1); //1ms
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET);	// STEP PIN Low
+			HAL_Delay(1);
+}
+}
+
+
+//Motor soll fahren bis Endschalter erreicht ist
+void Ref_Motor_y ()
+	{
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);				// Reset (inverted) PIN
+			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);				// Sleep (inverted) PIN
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET); 			// Enable (inverted) PIN
+
+
+//While Schleife, bis Endschalter erreicht ist
+while(Endschalter_Y_druck != 0)
+{
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);	// STEP PIN High
+			HAL_Delay(1); //1ms
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);	// STEP PIN Low
+			HAL_Delay(1);
+	}
+	}
+
+
+//Startposition für y- und z- festlegen (Ungefähr n cm vom Endschalter weg)
+
+void Startposition ()   //Auch Pins noch anpassen
+{
+//Startposition y-Achse:
+
+//Drehrichtung festlegen:
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5,SET);  //  Direction Pin (+sense rotation)
+
+//Verfahren um 100 Schritte:
+	for(int i=0; i<30; i++)				// 200schritte = 360°
+		{
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);	// STEP PIN High
+			HAL_Delay(1); //1ms
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);	// STEP PIN Low
+			HAL_Delay(1);
+		}
+
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5,SET);  //  Direction Pin (+sense rotation)
+
+
+//Startposition z:
+
+//Drehrichtung festlegen:
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET);   			//  Direction Pin (+sense rotation)
+
+//Verfahren um 100 Schritte:
+	for(int i=0; i<100; i++)				// 200 schritte = 360°
+		{
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);	// STEP PIN High : HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_6);
+			HAL_Delay(1); //1ms
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET);	// STEP PIN Low
+			HAL_Delay(1);
+		}
+
+}
+}
+}
+
+*/
