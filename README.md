@@ -5,9 +5,9 @@
 SLA 3d printer was created and developped during this project.
 The main goal is to print a cylindre using a resonant laser system.
 in this repo you will find:
-- software stack written in c on stm32 microcontroller ![main](/Src/main.c)
-- pcb designed with eagle ![pcb](pcb_eagle/)
-- documentation and contributions ![report](3D Drucker_Reser12_V5.pdf)
+- software stack written in c on stm32 microcontroller [main](/Src/main.c)
+- pcb designed with eagle [pcb](pcb_eagle/)
+- documentation and contributions [report](3D Drucker_Reser12_V5.pdf)
 
 ## Picture from inside the printer 
 ![inside](inside.jpg)
